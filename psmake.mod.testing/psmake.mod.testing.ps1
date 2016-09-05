@@ -299,6 +299,64 @@ function Define-XUnitTests
 
 <#
 .SYNOPSIS 
+Executes JavaScript Jasmine Tests 
+
+.DESCRIPTION
+
+.EXAMPLE
+
+.EXAMPLE
+
+.EXAMPLE
+
+#>
+
+function Define-UIJasmineTests
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true, Position=0)]
+        # Test group name. Used for display as well as naming reports. 
+        [ValidateNotNullOrEmpty()]
+        [Alias('Name','tgn')]
+        [string]$GroupName,
+
+        [Parameter(Mandatory=$true, Position=1)]
+        # Path to nodejs.exe.
+        # It is possible to specify multiple paths.
+        [ValidateNotNullOrEmpty()]
+        [Alias('npath','node')]
+        [string]$NodePath,
+
+        [Parameter()]
+        # Test report name. If not specified, a GroupName parameter would be used (spaces would be converted to underscores). 
+        [AllowNull()]
+        [string]$ReportName = $null,
+
+        [Parameter()]
+        # Jasmine.Runner.Console version. By default it is: 2.0.0
+        [ValidateNotNullOrEmpty()]
+        [ValidatePattern("^[0-9]+(\.[0-9]+){0,3}$")]
+        [Alias('RunnerVersion')]
+        [string]$JasmineRunnerVersion = "2.0.0"
+    )
+
+    if (($ReportName -eq $null) -or ($ReportName -eq '')) { $ReportName = $GroupName -replace ' ','_' }
+
+    Create-Object @{
+        Package='jasmine.runner.console';
+        PackageVersion=$JasmineRunnerVersion;
+        GroupName=$GroupName;
+        ReportName=$ReportName;
+        Runner='tools\xunit.console.exe';
+        GetRunnerArgs={
+            param([PSObject]$Definition, [string]$ReportDirectory)
+            return $Definition.Assemblies + "-nologo", "-noshadow", "-quiet", "-nunit", "$ReportDirectory\$($Definition.ReportName).xml"
+        };}
+}
+
+<#
+.SYNOPSIS 
 Executes tests from one or more specified test definitions.
 
 .DESCRIPTION
