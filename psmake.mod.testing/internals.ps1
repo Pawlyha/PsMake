@@ -22,7 +22,7 @@ function Run-OpenCover($OpenCoverVersion, $Runner, $RunnerArgs, $CodeFilter, $Te
 	$openCoverConsole = Find-OpenCoverExe "$openCoverPath\tools\OpenCover.Console.exe", "$openCoverPath\OpenCover.Console.exe"
 
 	Write-ShortStatus "Running tests with OpenCover"
-	call "$openCoverConsole" "-log:Error" "-showunvisited" "-register:$Profiler" "-target:$Runner"  "-filter:$CodeFilter" "-output:$Output" "-returntargetcode" "-coverbytest:$TestFilter" "-targetargs:$RunnerArgs"
+	call "$openCoverConsole" "-oldStyle" "-log:Error" "-showunvisited" "-register:$Profiler" "-target:$Runner"  "-filter:$CodeFilter" "-output:$Output" "-returntargetcode" "-coverbytest:$TestFilter" "-targetargs:$RunnerArgs"
 }
 
 function Resolve-TestAssemblies

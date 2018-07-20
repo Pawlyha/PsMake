@@ -1,6 +1,10 @@
 PsMake Testing Module
 ========================================
 
+Version 1.3.2.0
+----------------------------------------
+(Change) Run-OpenCover: added -oldStyle flag to allow code coverage of .net core 2 assemblies.
+
 Version 1.3.1.1
 ----------------------------------------
 (Change) Run-OpenCover: added $profiler argument to support windows Local System account.
