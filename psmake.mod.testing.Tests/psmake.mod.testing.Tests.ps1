@@ -12,8 +12,8 @@ function Write-Host
 		[switch]${NoNewline},
 		${Separator},
 		${ForegroundColor},
-		${BackgroundColor}) 
-		
+		${BackgroundColor})
+
 		process
 		{
 		}
@@ -40,10 +40,12 @@ $FailingMsTest = "$PSScriptRoot\TestSolution\Failing.MsTest.Tests\bin\Release\Fa
 
 $PassingXUnit1 = "$PSScriptRoot\TestSolution\Passing.XUnit.Tests1\bin\Release\Passing.XUnit.Tests1.dll"
 $PassingXUnit2 = "$PSScriptRoot\TestSolution\Passing.XUnit.Tests2\bin\Release\Passing.XUnit.Tests2.dll"
+$PassingXUnit3 = "$PSScriptRoot\TestSolution\Passing.XUnit.Tests3\bin\Release\Passing.XUnit.Tests3.dll"
 $FailingXUnit = "$PSScriptRoot\TestSolution\Failing.XUnit.Tests\bin\Release\Failing.XUnit.Tests.dll"
 
 $PassingNUnit31 = "$PSScriptRoot\TestSolution\Passing.NUnit3.Tests1\bin\Release\Passing.NUnit3.Tests1.dll"
 $PassingNUnit32 = "$PSScriptRoot\TestSolution\Passing.NUnit3.Tests2\bin\Release\Passing.NUnit3.Tests2.dll"
+$PassingNUnit33 = "$PSScriptRoot\TestSolution\Passing.NUnit3.Tests3\bin\Release\Passing.NUnit3.Tests3.dll"
 $FailingNUnit3 = "$PSScriptRoot\TestSolution\Failing.NUnit3.Tests\bin\Release\Failing.NUnit3.Tests.dll"
 
 Describe "Define-DotnetTests" {
@@ -90,7 +92,7 @@ Describe "Define-DotnetTests" {
 }
 
 Describe "Define-NUnitTests" {
-    
+
     It "It should use group name as report name if second is not specified" {
         $def = Define-NUnitTests -GroupName 'my group' -TestAssembly "some.dll"
         $def | Should Not Be $null
@@ -124,7 +126,7 @@ Describe "Define-NUnitTests" {
         $def | Should Not Be $null
         $def.PackageVersion | Should Be '2.6.2'
     }
-        
+
     It "It should allow to specify one assembly" {
         $def = Define-NUnitTests -GroupName 'group' -TestAssembly $PassingNUnit1
         $def | Should Not Be $null
@@ -154,7 +156,7 @@ Describe "Define-NUnitTests" {
 }
 
 Describe "Define-NUnit3Tests" {
-    
+
     It "It should use group name as report name if second is not specified" {
         $def = Define-NUnit3Tests -GroupName 'my group' -TestAssembly "some.dll"
         $def | Should Not Be $null
@@ -187,7 +189,7 @@ Describe "Define-NUnit3Tests" {
         $def | Should Not Be $null
         $def.PackageVersion | Should Be '3.2.0'
     }
-        
+
     It "It should allow to specify one assembly" {
         $def = Define-NUnit3Tests -GroupName 'group' -TestAssembly $PassingNUnit31
         $def | Should Not Be $null
@@ -217,7 +219,7 @@ Describe "Define-NUnit3Tests" {
 }
 
 Describe "Define-MbUnitTests" {
-    
+
     It "It should use group name as report name if second is not specified" {
         $def = Define-MbUnitTests -GroupName 'my group' -TestAssembly "some.dll"
         $def | Should Not Be $null
@@ -250,7 +252,7 @@ Describe "Define-MbUnitTests" {
         $def | Should Not Be $null
         $def.PackageVersion | Should Be '3.4.15.0'
     }
-        
+
     It "It should allow to specify one assembly" {
         $def = Define-MbUnitTests -GroupName 'group' -TestAssembly $PassingMbUnit1
         $def | Should Not Be $null
@@ -280,7 +282,7 @@ Describe "Define-MbUnitTests" {
 }
 
 Describe "Define-MsTests" {
-    
+
     It "It should use group name as report name if second is not specified" {
         $def = Define-MsTests -GroupName 'my group' -TestAssembly "some.dll"
         $def | Should Not Be $null
@@ -313,7 +315,7 @@ Describe "Define-MsTests" {
         $def | Should Not Be $null
         $def.Runner | Should Match '11\.0'
     }
-        
+
     It "It should allow to specify one assembly" {
         $def = Define-MsTests -GroupName 'group' -TestAssembly $PassingMsTest1
         $def | Should Not Be $null
@@ -343,7 +345,7 @@ Describe "Define-MsTests" {
 }
 
 Describe "Define-XUnitTests" {
-    
+
     It "It should use group name as report name if second is not specified" {
         $def = Define-XUnitTests -GroupName 'my group' -TestAssembly "some.dll"
         $def | Should Not Be $null
@@ -376,7 +378,7 @@ Describe "Define-XUnitTests" {
         $def | Should Not Be $null
         $def.PackageVersion | Should Match '2\.1\.0'
     }
-        
+
     It "It should allow to specify one assembly" {
         $def = Define-XUnitTests -GroupName 'group' -TestAssembly $PassingXUnit1
         $def | Should Not Be $null
@@ -406,7 +408,7 @@ Describe "Define-XUnitTests" {
 }
 
 Describe "Run-Tests" {
-    
+
     It "It should allow to successfully run NUnit tests with one assembly and generate reports" {
         Define-NUnitTests -GroupName 'rt1' -TestAssembly $PassingNUnit1 | Run-Tests
         $? | Should Be $true
@@ -565,10 +567,21 @@ Describe "Run-Tests" {
         }
     }
 
+    It "It should allow to run tests in .netcore 2 assemblies" {
+        $tests = @()
+        $tests += Define-NUnit3Tests -GroupName 'rt15_1' -TestAssembly $PassingNUnit33
+        $tests += Define-XUnitTests -GroupName 'rt15_2' -TestAssembly $PassingXUnit3
+        $tests | Run-Tests -Cover -CodeFilter "+[Domain*]* -[*Tests*]*" -TestFilter "*Tests*.dll"
+        $? | Should Be $true
+        Test-Path 'reports\rt15_1.xml' | Should Be $true
+        Test-Path 'reports\rt15_2.xml' | Should Be $true
+        Test-Path 'reports\rt15_1_coverage.xml' | Should Be $true
+        Test-Path 'reports\rt15_2_coverage.xml' | Should Be $true
+    }
 }
 
 Describe "Generate-CoverageSummary" {
-    
+
     It "It should generate coverage summary from coverage reports" {
         $tests = @()
         $tests += Define-NUnitTests -GroupName 'rt13_1' -TestAssembly $PassingNUnit1
@@ -597,7 +610,7 @@ Describe "Generate-CoverageSummary" {
 }
 
 Describe "Check-AcceptableCoverage" {
-    
+
     It "It should allow to verify test coverage" {
         $tests = @()
         $tests += Define-NUnitTests -GroupName 'rt14_1' -TestAssembly $PassingNUnit1
