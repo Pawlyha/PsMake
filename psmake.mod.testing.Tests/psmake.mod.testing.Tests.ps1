@@ -40,12 +40,12 @@ $FailingMsTest = "$PSScriptRoot\TestSolution\Failing.MsTest.Tests\bin\Release\Fa
 
 $PassingXUnit1 = "$PSScriptRoot\TestSolution\Passing.XUnit.Tests1\bin\Release\Passing.XUnit.Tests1.dll"
 $PassingXUnit2 = "$PSScriptRoot\TestSolution\Passing.XUnit.Tests2\bin\Release\Passing.XUnit.Tests2.dll"
-$PassingXUnit3 = "$PSScriptRoot\TestSolution\Passing.XUnit.Tests3\bin\Release\Passing.XUnit.Tests3.dll"
+#$PassingXUnit3 = "$PSScriptRoot\TestSolution\Passing.XUnit.Tests3\bin\Release\Passing.XUnit.Tests3.dll"
 $FailingXUnit = "$PSScriptRoot\TestSolution\Failing.XUnit.Tests\bin\Release\Failing.XUnit.Tests.dll"
 
 $PassingNUnit31 = "$PSScriptRoot\TestSolution\Passing.NUnit3.Tests1\bin\Release\Passing.NUnit3.Tests1.dll"
 $PassingNUnit32 = "$PSScriptRoot\TestSolution\Passing.NUnit3.Tests2\bin\Release\Passing.NUnit3.Tests2.dll"
-$PassingNUnit33 = "$PSScriptRoot\TestSolution\Passing.NUnit3.Tests3\bin\Release\Passing.NUnit3.Tests3.dll"
+#$PassingNUnit33 = "$PSScriptRoot\TestSolution\Passing.NUnit3.Tests3\bin\Release\Passing.NUnit3.Tests3.dll"
 $FailingNUnit3 = "$PSScriptRoot\TestSolution\Failing.NUnit3.Tests\bin\Release\Failing.NUnit3.Tests.dll"
 
 Describe "Define-DotnetTests" {
@@ -566,7 +566,7 @@ Describe "Run-Tests" {
             Test-Path 'reports\rt14.xml' | Should Be $true
         }
     }
-
+    <#
     It "It should allow to run tests in .netcore 2 assemblies" {
         $tests = @()
         $tests += Define-NUnit3Tests -GroupName 'rt15_1' -TestAssembly $PassingNUnit33
@@ -578,6 +578,7 @@ Describe "Run-Tests" {
         Test-Path 'reports\rt15_1_coverage.xml' | Should Be $true
         Test-Path 'reports\rt15_2_coverage.xml' | Should Be $true
     }
+    #>
 }
 
 Describe "Generate-CoverageSummary" {
